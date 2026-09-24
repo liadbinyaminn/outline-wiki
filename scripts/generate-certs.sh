@@ -20,7 +20,7 @@ openssl req -x509 -nodes -newkey rsa:2048 \
   -keyout "$CERT_DIR/outline.liadev.key" \
   -out "$CERT_DIR/outline.liadev.crt" \
   -subj "/CN=$DOMAIN" \
-  -addext "subjectAltName=DNS:*.$DOMAIN,DNS:outline.$DOMAIN"
+  -addext "subjectAltName=DNS:$DOMAIN"
 
 chmod 600 "$CERT_DIR/outline.liadev.key"  
 
