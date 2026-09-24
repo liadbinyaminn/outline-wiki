@@ -1,0 +1,9 @@
+.env
+nginx/certs/*
+!nginx/certs/.gitkeep
+*enc
+*sql
+*gz
+
+# macOS
+.DS_Store
