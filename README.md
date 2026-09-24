@@ -2,20 +2,26 @@
 
 This repository runs Outline on my Debian 13 homelab server. Docker Compose starts Outline, PostgreSQL, and Redis; Nginx serves HTTPS with a self-signed certificate. Sign-in uses Slack OIDC. The server is reachable through Tailscale at `https://outline.liadev`.
 
+## Architecture
+
+### Access and services
+
+```mermaid
+flowchart TB
+    Client["Client on Tailscale"] -->|HTTPS| Nginx["Nginx on Debian 13"]
+    Nginx --> Outline["Outline Wiki"]
+    Outline --> Postgres[(PostgreSQL)]
+    Outline --> Redis[(Redis)]
+    Outline -->|OIDC sign-in| Slack["Slack workspace"]
+```
+
+### Database backups
+
 ```mermaid
 flowchart LR
-    Client["Client device<br/>Tailscale + trusted public certificate"] -->|HTTPS over Tailscale| Nginx
-
-    subgraph Server["Debian 13 homelab server"]
-        Nginx["Nginx<br/>self-signed TLS"] --> Outline["Outline Wiki"]
-        Outline --> Postgres[(PostgreSQL)]
-        Outline --> Redis[(Redis)]
-        Cron["Cron"] --> Backup["backup-db.sh"]
-        Backup -->|pg_dump| Postgres
-        Backup --> Archives["Compressed, encrypted backups<br/>latest 10"]
-    end
-
-    Outline <-->|OIDC sign-in| Slack["Slack workspace"]
+    Cron["Cron"] --> Backup["backup-db.sh"]
+    Postgres[(PostgreSQL)] -->|pg_dump| Backup
+    Backup --> Archives["Compressed, encrypted backups: latest 10"]
 ```
 
 ## Guide 1: Access my running server
